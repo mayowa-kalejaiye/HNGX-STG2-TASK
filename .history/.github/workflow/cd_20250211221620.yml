@@ -1,0 +1,7 @@
+name: CD Pipeline
+
+on: 
+  push:
+    branches:
+      - main # Runs on pushes to the main branch
+      

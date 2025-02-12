@@ -1,0 +1,8 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main # Runs on PRs to the main branch
+
+job:
