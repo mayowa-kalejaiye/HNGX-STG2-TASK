@@ -7,30 +7,29 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Runs the deployment process on the latest Ubuntu environment
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3  # Checks out the code from your repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12.5'  # Set up the Python version for your app
+          python-version: '3.12.5'
 
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip  # Upgrade pip to the latest version
-          pip install -r requirements.txt  # Install the app's dependencies
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Install Railway CLI
         run: |
-          curl -sSL https://railway.app/install.sh | bash  # Installs Railway CLI
+          curl -sSL https://railway.app/cli | bash
+
+      - name: Login to Railway CLI
+        run: |
+          echo "${{ secrets.RAILWAY_TOKEN }}" | railway login
 
       - name: Deploy to Railway
-        run: |
-          railway up  # Railway’s CLI command to deploy your app. Make sure you're logged in with `railway login`
-          
-      - name: Run Tests
-        run: |
-          pytest  # Runs tests with coverage report
+        run: railway up
