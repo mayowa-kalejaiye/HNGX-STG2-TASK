@@ -17,8 +17,9 @@ jobs:
         run: |
           npm install -g @railway/cli  # Install Railway CLI using npm
 
-      - name: Set Railway API Key
-        run: echo ${{ secrets.RAILWAY_API_KEY }} > ~/.railway  # Directly set the API key for Railway CLI
+      - name: Authenticate with Railway using API Key
+        run: |
+          echo "RAILWAY_API_KEY=${{ secrets.RAILWAY_API_KEY }}" >> $GITHUB_ENV  # Set Railway API key as environment variable
 
       - name: Deploy to Railway
         run: railway up -- --yes  # Deploy the app to Railway with '--yes' passed correctly
