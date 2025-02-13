@@ -23,4 +23,4 @@ jobs:
           RAILWAY_API_KEY: ${{ secrets.RAILWAY_API_KEY }}
 
       - name: Deploy to Railway
-        run: railway up --yes  # Deploy the app to Railway
+        run: railway up -- --yes  # Deploy the app to Railway with '--yes' passed correctly
