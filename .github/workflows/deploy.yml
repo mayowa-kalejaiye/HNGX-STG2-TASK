@@ -15,7 +15,7 @@ jobs:
 
       - name: Set up Railway CLI
         run: |
-          curl -sSL https://railway.app/cli | bash
+          curl -sSL https://railway.app/cli | bash || { echo "Failed to download Railway CLI"; exit 1; }
           railway login --token ${{ secrets.RAILWAY_API_KEY }}
 
       - name: Deploy to Railway
