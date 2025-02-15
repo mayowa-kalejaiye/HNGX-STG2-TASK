@@ -6,6 +6,7 @@ services:
     container_name: fastapi_app
     ports:
       - "8000:8000"
+    restart: always  # Ensures the container restarts if it crashes
 
   nginx:
     image: nginx:latest
@@ -16,3 +17,4 @@ services:
       - "80:80"
     depends_on:
       - fastapi
+    restart: always  # Ensures nginx restarts if it fails

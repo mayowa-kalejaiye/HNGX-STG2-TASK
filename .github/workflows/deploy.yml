@@ -10,51 +10,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
 
-      # Deploy to server
       - name: Deploy to Staging Server
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{secrets.SERVER_HOST}}
-          key: ${{secrets.SERVER_SSH_KEY}}
-          username: ${{secrets.SERVER_USERNAME}}
+          host: ${{ secrets.SERVER_HOST }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          username: ${{ secrets.SERVER_USERNAME }}
           script: |
-            echo “Starting deployment...”
+            echo "Starting deployment..."
 
-            # Create and navigate to project directory
-            mkdir -p HNGX-STG2-TASK
-            cd HNGX-STG2-TASK
+            # Stop existing containers if running
+            echo "Stopping existing containers..."
+            docker stop fastapi_app || true
+            docker stop nginx_proxy || true
+            docker rm fastapi_app || true
+            docker rm nginx_proxy || true
 
-            # Clone the repository into the project directory
-            git clone https://github.com/mayowa-kalejaiye/HNGX-STG2-TASK .
-
-            # Pull latest changes
-            echo “Pulling latest changes...”
+            # Pull latest code
+            echo "Pulling latest changes..."
+            cd ~/HNGX-STG2-TASK || mkdir ~/HNGX-STG2-TASK && cd ~/HNGX-STG2-TASK
             git fetch --all
-            git pull origin main
+            git reset --hard origin/main
 
-            # Setup virtual environment
-            echo “Setting up virtual environment...”
-            python3 -m venv venv || exit 1
-            source venv/bin/activate || exit 1
-
-            #Install fastapi
-            pip install fastapi || exit 1
-            echo “FastAPI installed successfully”
-
-            # Install dependencies
-            echo “Installing dependencies...”
-            pip install -r requirements.txt || exit 1
-
-            # Stop existing application if running
-            echo “Stopping existing application...”
-            killall uvicorn || echo “No existing process found”
-            echo “Application stopped successfully”
-
-            # Start application
-            echo “Starting application...”
-            nohup uvicorn main:app --host 0.0.0.0 --port 8000 > app.log 2>&1 &
-            echo “Application started successfully”
+            # Build & restart containers
+            echo "Building and restarting containers..."
+            docker-compose down
+            docker-compose up --build -d
+            echo "Deployment completed successfully!"
