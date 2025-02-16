@@ -1,4 +1,4 @@
-from tests import client
+from . import client
 
 
 def test_get_all_books():
